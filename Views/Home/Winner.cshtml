@@ -1,0 +1,28 @@
+﻿<div style="text-align:center">
+    <a style=" font-size: 30px; color:blue">MasterMind</a>
+    <br />
+
+<picture>
+    <img id="leo" src="/lib/images/leo.gif" alt="leo"style="text-align:center; visibility:hidden">
+</picture>
+<audio id="fanfary" src="~/lib/Fanfary.mp3"></audio>
+<br />
+    <p></p>
+    <p></p>
+<button type="button" id="newgame" onclick="redirect()" style="text-align:center; width:55%"  class="btn btn-primary black">Nowa Gra</button>
+
+</div>
+<script>
+    window.onload = fanfary;
+    function redirect()
+    {
+        window.location.href = "/Home";
+    }
+    function fanfary()
+    {
+        var x = document.getElementById("fanfary");
+        x.play();
+        document.getElementById("leo").style.visibility = "visible";
+        
+    }
+</script>

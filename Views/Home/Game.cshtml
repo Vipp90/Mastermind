@@ -1,0 +1,423 @@
+﻿<div class="grid-container1" style="text-align:center">
+    <div class="grid-item">
+        <div class="code" id="code" style="text-align:left; padding-left:80px">
+            Ukryty kod <br />
+            <input name="1" type="button" class="button1" id="code1" value="?" />
+            <input name="2" type="button" class="button1" id="code2" value="?" />
+            <input name="3" type="button" class="button1" id="code3" value="?" />
+            <input name="4" type="button" class="button1" id="code4" value="?" /> <br />
+
+        </div>
+        <br/>
+        <audio style="padding-right:60px; text-align:left" id="music" src="~/lib/Music/1.mp3" controls="controls"></audio>
+        <button onclick="musicplayer('next')" style="border-radius:26px; width:230px; border:none"><i class="fas fa-forward"></i></button>
+    </div>
+        
+    <div style="text-align:center" class="grid-item">
+        
+        <div style="padding-right:260px">
+         
+            <a style=" font-size: 30px; color:blue">MasterMind</a>
+            <div style=" font-size: 15px">
+                Czas:
+                <label id="min">00</label>:<label id="sec">00</label>:<label id="mili">00</label>
+            </div>
+
+            <audio id="loser" src="~/lib/Loser.mp3"></audio>
+            <div class="set">
+                <div class="dk_0" id="dk_0" style="visibility:hidden">
+                    <input name="1" type="button" class="button1" id="k 0+1" />
+                    <input name="2" type="button" class="button1" id="k 0+2" /><br />
+                    <input name="3" type="button" class="button1" id="k 0+3" />
+                    <input name="4" type="button" class="button1" id="k 0+4" />
+                </div>
+                <div class="big">
+                    <input name="Color1" type="button" class="button2" id="0+1" onclick="changeColor1(id)" />
+                    <input name="Color2" type="button" class="button2" id="0+2" onclick="changeColor1(id)" />
+                    <input name="Color3" type="button" class="button2" id="0+3" onclick="changeColor1(id)" />
+                    <input name="Color4" type="button" class="button2" id="0+4" onclick="changeColor1(id)" />
+                </div>
+                <div class="image" id="p_0" style="text-align: right; visibility:hidden">
+                    <picture style="text-align: right">
+                        <img id="pi_0" src="~/lib/images/Wisielec0.png" alt="Wisielec" style="width:100px;margin-left:inherit">
+                    </picture>
+                </div>
+            </div>
+
+            @for (int i = 1; i < 6; i++)
+            {
+                <div class="set">
+                    <div class="dk_0" id="dk_@i" style="display:none">
+                        <input name="1" type="button" class="button1" id="k @i+1" />
+                        <input name="2" type="button" class="button1" id="k @i+2" /><br />
+                        <input name="3" type="button" class="button1" id="k @i+3" />
+                        <input name="4" type="button" class="button1" id="k @i+4" />
+                    </div>
+                    <div class="other" id="d_@i" style="display:none">
+                        <input name="Color1" type="button" class="button2" id="@i+1" onclick="changeColor1(id)" />
+                        <input name="Color2" type="button" class="button2" id="@i+2" onclick="changeColor1(id)" />
+                        <input name="Color3" type="button" class="button2" id="@i+3" onclick="changeColor1(id)" />
+                        <input name="Color4" type="button" class="button2" id="@i+4" onclick="changeColor1(id)" />
+                    </div>
+                    <div class="image" id="p_@i" style="text-align: right; display:none">
+                        <picture style="text-align: right">
+                            <img id="pi_@i" src="~/lib/images/Wisielec0.png" alt="Wisielec" style="width: 100px; margin-left: inherit; visibility:hidden">
+                        </picture>
+                    </div>
+                </div>
+            }
+
+            <button type="button" id="newgame" onclick="redirect()" style="text-align:center" class="btn btn-primary black">Nowa Gra</button>
+            <button type="button" id="check" onclick="checkcode()" style="text-align:center" class="btn btn-primary black">Sprawdz kolory</button><br />
+
+        </div>
+
+    </div>
+            <div class="grid-item">
+
+            </div>
+        </div>
+
+
+        <script>
+    var mode = new String();
+    var c1;
+    var c2;
+    var c3;
+    var c4;
+    var sessionID;
+    var seconds;
+    var miliseconds;
+    var x = document.getElementById("music");
+    var loser = document.getElementById("loser");
+    var pause = "off";
+    var minutesLabel = document.getElementById("min");
+    var secondsLabel = document.getElementById("sec");
+    var miliLabel = document.getElementById("mili");
+    var totalSeconds = 0;
+    var totalmili = 0;
+    var j;
+    var starttime;
+    var endtime;
+    let k = 0;
+    var idd;
+    var colors = "";
+    var i;
+            window.onload = function ()
+        {
+            $.ajax({
+                    url: '@Url.Action("Get_sessionId", "Home")',
+                    type: 'POST',
+                    data: { },
+                }).done(function (res) {
+                    sessionID = res;
+                    get_mode();
+                }).fail(function (xhr, a, error) {
+                    console.log(error);
+                });
+    }
+
+    function start() {
+        seconds = setInterval(tick, 1000);
+        miliseconds = setInterval(tickmili, 10);
+        musicplayer();
+        // document.getElementById("music").loop = true;
+    }
+
+
+    function musicplayer(next)
+    {
+        var parametr = next;
+        console.log("przed");
+        console.log(parametr);
+        if (parametr != "next") {
+            i = (Math.random() * 3);
+            i = Math.floor(i);
+            player(i);
+            console.log("Jeżeli nie next");
+
+
+            document.getElementById('music').addEventListener('ended', function () {
+                console.log("I" + i);
+                i++;
+                if (i > 2) { i = 0; }
+                setTimeout(function () { player(i)}, 2000);
+                
+
+            }, false);
+        } if (parametr == "next")
+        {
+            console.log(i);
+            i++;
+            if (i > 2) { i = 0; }
+            console.log(i);
+            player(i);
+        }
+    }
+
+    function player(i)
+    {
+        var nextSong = "";
+        var audioPlayer = document.getElementById('music');
+
+        nextSong = "/lib/Music/" + i + ".mp3";
+        audioPlayer.src = nextSong;
+        audioPlayer.load();
+        audioPlayer.play();
+        
+
+    }
+
+    function get_mode()
+    {
+           $.ajax({
+               url: '@Url.Action("Download_game_mode", "Home")',
+                type: 'GET',
+         data: { sessionID},
+           }).done(function (res) {
+               mode = res;
+               if (mode == "random") {
+               setrandomcode();
+               }
+
+            }).fail(function (xhr, a, error) {
+               console.log(error);
+           });
+    }
+/*
+    function music_control(mp3)
+    {
+        var mp3 = document.getElementById("musicbutton");
+        if (pause == "off") {
+            mp3.innerHTML = "Włącz muzykę";
+            x.pause();
+            pause = "on";
+        } else if (pause == "on")
+        {
+            x.play();
+            mp3.innerHTML = "Wyłącz muzykę";
+            pause = "off";
+        }
+    }
+    */
+
+    function setrandomcode()
+    {
+            const colors = ["red", "blue", "green", "yellow", "brown", "orange"];
+            var color = ["", "", "", ""];
+            var x;
+            for (let i = 0; i < 4; i++) {
+                x = (Math.random() * 6);
+                x = Math.floor(x);
+                color[i] = colors[x];
+            }
+             c1 = color[0];
+             c2 = color[1];
+             c3 = color[2];
+             c4 = color[3];
+        $.ajax({
+                url: '@Url.Action("UpdateRandomCode", "Home")',
+            type: 'POST',
+            data: { c1, c2, c3, c4, sessionID },
+
+            }).done(function (res) {
+
+            }).fail(function (xhr, a, error) {
+                console.log(error);
+            }); }
+
+    function redirect()
+    {
+        window.location.href = "/Home";
+    }
+
+    function changeColor1(id)
+    {
+        var modificatedid = id.slice(0, 1);
+         if (j == null || modificatedid == j)
+        {
+            const colors = ["red", "blue", "green", "yellow", "brown", "orange"];
+             if (idd != id) {
+                 var color = document.getElementById(id).style.backgroundColor;
+                 i = colors.indexOf(color) + 1;
+            }
+            document.getElementById(id).style.backgroundColor = colors[i];
+            if (i > 4) {
+                i = 0;
+            } else { i++; }
+            idd = id;
+        }
+    }
+
+    function checkcode() {
+
+        if (j == null) {
+            j = 0;
+            start();
+           
+        }
+        var a = document.getElementById(j + "+1").style.backgroundColor.toString();
+        var b = document.getElementById(j + "+2").style.backgroundColor.toString();
+        var c = document.getElementById(j + "+3").style.backgroundColor.toString();
+        var d = document.getElementById(j + "+4").style.backgroundColor.toString();
+
+        if (a && b && c && d != "") {
+            var h = colors.match(a + b + c + d);
+            colors = colors + a + b + c + d + ",";
+            if (h != null && j != 0) {
+
+                starttime = Date.now();
+                alert("Już typowałeś taki kod")
+                endtime = Date.now();
+                Addtime(starttime, endtime);
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("Check", "Home")',
+                    dataType: "text",
+                    data: { e: a, f: b, g: c, h: d, sessionID },
+                    success: function (data) {
+                        if (data == "b b b b ") {
+                            var score = parseInt(minutesLabel.innerHTML * 60000) + parseInt(secondsLabel.innerHTML * 1000) + parseInt(miliLabel.innerHTML);
+                            alert("Brawo! Odgadłeś kod!")
+
+                            if (mode == "random") {
+                                $.ajax({
+                                    url: '@Url.Action("Update_highscores", "Home")',
+                                    type: 'POST',
+                                    data: { score, sessionID },
+
+                                }).done(function (res) {
+
+                                }).fail(function (xhr, a, error) {
+                                    console.log(error);
+
+                                });
+                            } else
+                            {
+                                $.ajax({
+                                    url: '@Url.Action("Clean_game", "Home")',
+                                    data: { sessionID },
+                                    success: function (returndata) { }
+                                });
+                            }
+                            window.location.href = "@Url.Action("Winner", "Home")";
+                        }
+                        else {
+
+                            if (j != 5) {
+                                Create_hint(data);
+                            }
+                            else {
+                                $.ajax({
+                                    url: '@Url.Action("ReturnKod", "Home")',
+                                    data: { sessionID },
+                                    success: function (returndata) {
+                                        Create_hint(data);
+                                        document.getElementById("code1").value = "";
+                                        document.getElementById("code1").style.backgroundColor = returndata[0];
+                                        document.getElementById("code2").value = "";
+                                        document.getElementById("code2").style.backgroundColor = returndata[1];
+                                        document.getElementById("code3").value = "";
+                                        document.getElementById("code3").style.backgroundColor = returndata[2];
+                                        document.getElementById("code4").value = "";
+                                        document.getElementById("code4").style.backgroundColor = returndata[3];
+                                        alert("Przykro mi, nie odgadłeś kodu. Koniec gry !");
+                                        $.ajax({
+                                            url: '@Url.Action("Clean_game", "Home")',
+                                            data: { sessionID },
+                                            success: function (returndata) { }
+                                        });
+                                        x.pause();
+                                        loser.play();
+                                        stoptime();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            starttime = Date.now();
+            alert("Nie wybrałeś wszystkich kolorów !")
+            endtime = Date.now();
+            Addtime(starttime, endtime);
+        }
+}
+    function stoptime()
+        {
+            clearInterval(seconds);
+            clearInterval(miliseconds);
+        }
+
+    function Addtime(starttime, endtime)
+    {
+        time = Math.round((endtime - starttime) / 1000);
+        totalSeconds = totalSeconds + time;
+    }
+
+    function Create_hint(data)
+    {
+        j++;
+        var l = j - 1;
+        if (j != 6) {
+            document.getElementById("d_" + j).style.display = "block";
+            document.getElementById("dk_" + j).style.display = "block";
+            document.getElementById("p_" + j).style.display = "block";
+            //document.getElementById("pii_" + j).style.display = "block";
+            document.getElementById("dk_" + j).style.visibility = "hidden";
+            document.getElementById("p_" + j).style.display = "hidden";
+            document.getElementById("p_0").style.display = "visible";
+            document.getElementById("dk_0").style.display = "visible";
+
+        } else { document.getElementById("check").disabled = true; }
+        var images = ['Wisielec0.png', 'Wisielec1.png', 'Wisielec2.png', 'Wisielec3.png', 'Wisielec4.png', 'Wisielec5.png'];
+        document.getElementById("pi_" + l).src = "/lib/images/" + images[l];
+            var black = (data.match(/b/g) || []).length;
+            var white = (data.match(/w/g) || []).length;
+            for (let i = 0; i < 4; i++) {
+                var iplus = i + 1;
+                if (black > 0) {
+                    document.getElementById("k " + l + "+" + iplus).style.backgroundColor = "black";
+                    black = black - 1;
+                } else if (white > 0) {
+                    document.getElementById("k " + l + "+" + iplus).style.backgroundColor = "white";
+                    white = white - 1;
+                }
+                else {
+                    document.getElementById("k " + l + "+" + iplus).value = "X";
+                }
+            }
+        document.getElementById("dk_" + l).style.visibility = "visible";
+        document.getElementById("pi_" + l).style.visibility = "visible";
+        document.getElementById("p_" + l).style.visibility = "visible";
+    }
+
+
+    function tick()
+    {
+        ++totalSeconds;
+        secondsLabel.innerHTML = pad(totalSeconds % 60);
+        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+    }
+    function tickmili()
+    {
+        ++totalmili;
+        miliLabel.innerHTML = pad(totalmili % 100);
+    }
+    function pad(val)
+    {
+        var valString = val + "";
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
+    }
+
+        </script>
+
+
+

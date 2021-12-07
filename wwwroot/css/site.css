@@ -1,0 +1,159 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+    a.navbar-brand {
+        white-space: normal;
+        text-align: center;
+        word-break: break-all;
+    }
+
+    /* Provide sufficient contrast against white background */
+    a {
+        color: #0366d6;
+    }
+
+td {
+    text-align: center;
+}
+    .button {
+        padding: 0 2px;
+        height: 50px;
+        width: 100px;
+        border: 1px solid black;
+        margin: 20px;
+        border-radius: 20%;
+    }
+
+    .set {
+        display: flex;
+        justify-content: center;
+    }
+p {
+    text-align: justify;
+    text-justify: inter-word;
+}
+    .dk_0 {
+        padding-top: 10px;
+        padding-left: -10px;
+    }
+
+    .image {
+        padding-top: 0px;
+        padding-left: 20px;
+    }
+
+    .big {
+        padding-top: 0px;
+        padding-left: 70px;
+    }
+
+    .other {
+        padding-top: 10px;
+        padding-left: 70px;
+    }
+
+    .grid-container1 {
+        display: grid;
+        
+        grid-template-columns: 240px auto ;
+        padding: 10px;
+    }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+}
+.grid-item {
+    /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+    
+    font-size: 12px;
+    text-align: center;
+}
+
+    .black {
+        color: black;
+    }
+
+    .bigplus {
+        padding-top: 10px;
+        padding-left: 30px;
+    }
+
+    .button2 {
+        background-color: white;
+        display: inline-block;
+        padding: 0px 2px;
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        border: 1px solid black;
+        margin: 20px;
+    }
+
+    .button1 {
+        display: inline-block;
+        vertical-align: middle;
+        background-color: white;
+        padding: 0 0px;
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        border: 1px solid black;
+        font-size: 9px;
+    }
+
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        color: #fff;
+        background-color: #1b6ec2;
+        border-color: #1861ac;
+    }
+
+    /* Sticky footer styles
+-------------------------------------------------- */
+    html {
+        font-size: 14px;
+    }
+
+    @media (min-width: 768px) {
+        html {
+            font-size: 16px;
+        }
+    }
+
+    .border-top {
+        border-top: 1px solid #e5e5e5;
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .box-shadow {
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    }
+
+    button.accept-policy {
+        font-size: 1rem;
+        line-height: inherit;
+    }
+
+    /* Sticky footer styles
+-------------------------------------------------- */
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        /* Margin bottom by footer height */
+        margin-bottom: 60px;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        white-space: nowrap;
+        line-height: 60px; /* Vertically center the text there */
+    }

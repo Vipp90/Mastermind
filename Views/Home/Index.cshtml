@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Mastermind";
+    @model Code;
+
+}
+<div class="grid-container">
+    <div class="grid-item" style="text-align:left">
+        <div style="text-align:center; font-size:14px">Tablica wyników</div>
+        <br />
+        <table id="table" style="width:110%;text-align:center">
+            <tr>
+                <th>#</th>
+                <th>Imię</th>
+                <th>Wynik (czas)</th>
+            </tr>
+        </table>   
+    </div>
+    <div class="grid-item">
+        <div style="text-align :center">
+            <a style=" font-size: 30px; color:blue">MasterMind</a>
+        </div>
+        <div style="text-align: right">
+
+        </div>
+        <div>
+        </div><div>
+        </div>
+        <div style="text-align:center">
+            <p></p>
+            <p style="font-size:17px; text-align:center">Wybierz kolory dla gracza</p>
+            <p></p>
+            <input name="Color1" type="button" class="button2" id="button1" onclick="changeColor(id)" />
+            <input name="Color2" type="button" class="button2" id="button2" onclick="changeColor(id)" />
+            <input name="Color3" type="button" class="button2" id="button3" onclick="changeColor(id)" />
+            <input name="Color4" type="button" class="button2" id="button4" onclick="changeColor(id)" />
+        </div>
+        <div class="form-group" style="text-align:center">
+            <p></p>
+            <p></p>
+            <a onclick="check()" class="btn btn-primary">Ustaw kod</a>
+            <a onclick="check('random')" class="btn btn-primary">Losowa gra </a>
+        </div>
+        <p style="font-size:15px; text-align:center">Instrukcja</p>
+        <p style ="font-size:12px; text-align:center">
+            Gra polega na odgadnięciu kolorowego kodu składającego się z 4 elementów. Każdy element może być kolorem jednym z 6 (<a style="color:red">czerwony </a>,<a style="color:blue">niebieski</a>, <a style="color:green">zielony </a>,<a style="color:yellow">żółty </a>, <a style="color:brown">brązowy </a>, <a style="color:orange">pomarańczowy </a>). Kolory mogą się powtarzać. Kod można odgadnąć w 6 próbach, za każdą próbą otrzymujemy wskazówki.
+            Czarne kółko <img src="~/lib/images/czarne.png"> oznacza, że jeden z kolorów jest na właściwym miejscu, białe kółko <img src="~/lib/images/biale.png"> oznacza, że jeden z kolorów jest właściwy ale jest w złym miejscu, natomiast kółko z krzyżykiem <img src="~/lib/images/brak.png"> oznacza, że któryś z kolorów nie pasuje do kodu. Pozycje podpowiedzi są generowane losowo, prosze nie sugerować się kolejnością :-)
+            W grę można grać we dwoje, jedna osoba ustawia kod klikając w kółka powyżej i wybiera przycisk "Ustaw kod", druga osoba odgaduje. Można również wygenerować losowy kod, po odgadnięciu którego znajdziecie się na tablicy dziesięciu najlepszych wyników. <br />
+                                                                                                                                                                                                                                                                      <a style="text-align:center">Powodzenia! :)</a>
+        </p>
+</div>
+    <div class="grid-item">
+        <label for="fname">Twoje imię:</label> <br />
+        <input type="text" id="fname" name="fname"><br><br>
+        </div>
+    </div>
+
+
+<script>
+    window.onload = function ()
+    {
+        Download_table();
+    };
+    let i = 0;
+    var idd;
+    var mode;
+    var name;
+    var sessionID;
+
+    function changeColor(id) {
+        const colors = ["red", "blue", "green", "yellow", "brown", "orange"];
+        if (idd != id) {
+            var color = document.getElementById(id).style.backgroundColor;
+         i =  colors.indexOf(color) +1;  
+        }
+        document.getElementById(id).style.backgroundColor = colors[i];
+        if (i > 4) {
+            i = 0;
+        } else { i++; }
+        idd = id;
+    }
+   function check(parametr) {
+
+        if (sessionID != "") {
+            if (parametr == "random") {
+                name = document.getElementById("fname").value;
+                mode = "random";
+                const colors = ["red", "blue", "green", "yellow", "brown", "orange"];
+                var color = ["", "", "", ""];
+                var x;
+                for (let i = 0; i < 4; i++) {
+                    x = (Math.random() * 6);
+                    x = Math.floor(x);
+                    color[i] = colors[x];
+                }
+                var a = color[0];
+                var b = color[1];
+                var c = color[2];
+                var d = color[3];
+
+                if (name != "") {
+                    setcode(a, b, c, d, name, mode, sessionID);
+                } else { alert("Nie podałeś swojego imienia!"); }
+            }
+            else {
+                var a = document.getElementById("button1").style.backgroundColor.toString();
+                var b = document.getElementById("button2").style.backgroundColor.toString();
+                var c = document.getElementById("button3").style.backgroundColor.toString();
+                var d = document.getElementById("button4").style.backgroundColor.toString();
+                if (a && b && c && d != "") {
+                    mode = "manual";
+                    setcode(a, b, c, d, name, mode, sessionID);
+                }
+                else {
+                    alert("Nie wybrałeś wszystkich kolorów !")
+                }
+            }
+        } else { alert("Aby gra działała poprawnie musisz odblokować pliki cookie w przeglądarce"); }
+    }
+
+    function setcode(a, b, c, d, name, mode, sessionID)
+    {
+                $.ajax({
+                url: '@Url.Action("SetCode", "Home")',
+                type: 'POST',
+                data: { a, b, c, d, name, mode, sessionID },
+            }).done(function (res) {
+                window.location.href = res.newUrl;
+            }).fail(function (xhr, a, error) {
+                console.log(error);
+            }); }
+
+    function Download_table()
+    {
+        $.ajax({
+            url: '@Url.Action("Download_table", "Home")',
+            data: {},
+            success: function (data) {
+                var table = document.getElementById("table");
+                var nums = new Array();
+                nums = data;
+                var liczba = nums.length - 1;
+
+                for (let i = liczba; i >= 0; i--)
+                {
+                    var row = table.insertRow(1)
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    const words = data[i].split(",");
+                    cell1.innerHTML = i+1;
+                    cell2.innerHTML = words[0];
+                    cell3.innerHTML = words[1];
+                }
+             }
+        });
+
+        $.ajax({
+                    url: '@Url.Action("Get_sessionId", "Home")',
+                    type: 'POST',
+                    data: { },
+                }).done(function (res) {
+                   sessionID = res;
+                    console.log("session1: " +sessionID);
+                }).fail(function (xhr, a, error) {
+                    console.log(error);
+                });
+    }
+</script>
